@@ -1,0 +1,148 @@
+		
+	HelloWorldClient ------LOOSE COUPLING--------  CHelloWorld::greet() { // AIRTEL
+							    cout << "hi world" << endl;
+						
+							// JIO
+							CAnotherHelloWorld::message() {
+								cout << "better world" << endl;
+
+	how does this impact your main() ?
+
+	// #include "CHelloWorld.h" // class comes with data members and functions/services both 
+	// #include "IHelloWorld.h"
+	
+	// CHelloWorld* pHelloworld = new CHelloWorld(); // TIGHT COUPLING BETWEEN CLIENT AND SERVICE
+	CFactory factoryObj;
+	IHelloWorld* piHelloWorld = factoryObj.createHelloWorld(2); // if 1, CHelloWorld returned, else CAnotherHW
+
+	// pHelloWorld->greet();
+	piHelloWorld->greet();
+
+	// 10 million lines of code ...  so many classes, so many functions being called
+
+	CAnotherHelloWorld* pHelloworld = new CAnotherHelloWorld* ();
+	pHelloWorld->message(); 
+	
+	// REPICATED IN 10 MILLION LINES OF CODE ... that is a PAIN ... 
+
+	JIO AND AIRTEL, in the interest of the customer say we provide a common interface to client
+	we will design our SIMs that they fit into the mobile slot
+
+				IHelloWorld // interface - pure abstract class
+				   virtual greet() = 0;  // RUNTIME POLYMORPHISM
+		
+	CHelloWorld:public IHelloWorld		CAnotherHelloWorld:public IHelloWorld
+		greet() {}					greet() {}
+
+
+	HelloWorldClient -- console application
+	CommonLibrary -- dll -- IHelloWorld, CFactory
+	AirtelLibrary -- dll -- CHelloWorld : public IHelloWorld IMPLEMENTATION
+	JIOLibrary -- dll -- CAnotherHelloWorld: public IHelloWorld IMPLEMENTATION
+
+	// FINAL DEMO
+	// switch from airtle to jio greet() function with a simple change to the input paramter
+	// to factor.createHelloWorld(1 to 2)
+*********************************************************************************************************
+						IUnknown		
+								virtual addRef() = 0;
+								virtual addRelease() = 0;
+							
+
+				ICalculator			IMobile                   
+					add() = 0		  virtual makeCall() = 0
+					subtract() = 0            virtual receiveCall() = 0
+								   virtual QueryInterface(int i, interface*&) = 0 
+										// downcasting
+
+					// virtual addRef() = 0;			addRef() = 0;	
+					// virtual release() = 0;			release() = 0;
+
+
+	CCalculator: public ICalculator                  CMobile: public IMobile public ICalculator
+		add()					    add()
+		subtract()				   subtract() 
+							    makeCall()
+							    receiveCall() { what is this? child pointer }
+							    QueryInterface(int i,& piInt) {
+								   switch (i)
+									case 1:
+									piInt = (ICalculator*)this ; // upcasting
+									case 2:
+									piInt = (ITime*)this ; // upcasting
+									case 3:
+									piInt = (IMobile*)this ; // upcasting
+								}
+
+							addRef() { ++_refCount}
+							release() { --_refCount}
+
+
+
+	realistically .... classes will inherit from multiple interfaces 
+
+	//#inlcude "CMobile.h" // not allowed in maiin, because class comes iwth data members. // IT Resources
+	#include "IMobile.h" // allowed only iterfaces	.. itwebds/ web interface, more api... i am ok recompile main
+	#include "ICalculator.h"
+
+	main() {
+		
+		IMobile* piMobile = pFactory->createMobile(0 - options for Interfaces ...);
+		piMobile->addRef(); // 1
+		
+		piMobile->makeCall();
+		piMobile->receiveCall();
+
+		ICalculator* piCalcOnMobile = NULL;
+		piMobile->QueryInterface(1,piCalcOnMobile);
+		piCalcOnMobile->addRef() // 2
+		
+		piCalcOnMobile ->add();
+		piCalcOnMobile ->subtract();
+
+		piMobile->release();
+		piCalcOnMobile->release(); // if this release is not done, you will notice that destructor 
+					// of CMobile is never called and this results in mem leak
+
+		// How will you confirm thre is no memory leak?
+	// by ensuring that the call to the CMobile destructor happesn at the end.	
+
+
+	}
+
+	
+	Interfaces.dll -- for all interfaces (already there)
+	Implementation.dll -- for CMobile class, and Factory class ....(no dedicated dll for factory)
+	main.exe .... 
+
+
+// #include "ICalculator.h" // #include this will get entire class
+ 
+// class ICalculator;  // forward declaration
+
+ 
+ ICalculator* piCalc;
+
+	QueryInterface(ICalcualator* & piCalc); // is complete info of class needed
+
+	ICalculator* piCalc = new ICalculator; // complete info of class is needed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

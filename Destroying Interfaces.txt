@@ -1,0 +1,104 @@
+if a class is inherited from another class 
+	then in what sequence does ctor call happen?
+
+in our case, its a multiple inheritance from IMobile and ICalculator
+   here how is the ctor call happening? whats the sequnece ?
+
+in what sequence does destructor call happen?  
+
+next you come to our scenario where you have a pointer to the parent interface
+
+	IMobile* piMobile; 	
+	ICalculator* piCalc; // 2 interface pointers exist in main
+
+	How do you plan to delete them?
+
+delete piMobile;
+delete piCalc;  ??????????????????  think about it and analyse it and share your observerations by lunch
+
+   main() {
+
+	A obj;   // creating on stack
+	
+	4bytes	   some memory for A object	
+	on stack = on heap
+	A* pObj = new A(); // Creation on heap
+	A* pObj1 = pObj;
+
+	 delete pObj1; // otherwise, you have Memory Leak
+pObj1= null
+	pObj ?? // dangling pointer .. or hung pointer .. because points to an address where there is no obj
+
+} // end of scope  ... obj gets deleted from memory
+	// pObj gets deleted ... 
+
+
+	visiting Card 1, 2 ---------------------------->  destroy HOME --- furniture, kitches, living .....
+
+	Has your address
+	Pointer ---------------------------------> Object (Memory) ....
+
+
+	Calculate(IMobile* & piMobile) { // input pointer  can be null or not null ...
+		
+		//piMobile = factory->creatMob();
+		//piMobile->addRef(); // +1 on the behalf of caller becauase you created this obj
+				
+		piMobile->queryInterface(piCalc);
+		piCalc->addRef(); +2
+		piCalc->add();
+		piCalc->Relesae(); // 1
+
+		//delete pCalc;
+		// piMobile = null;
+
+		piCalc->Release();  // +1
+		// piMobile->Release();  0 // candidate for delete ... 
+	 
+}
+
+	main {
+		pMob = factory->creatMob();
+		pMob -> addRef(); // 1
+		Calculate(piMobile);
+
+		piMobile->makeCall(); 
+		piMobile->Release(); // deleted finally
+
+
+		
+
+
+		pMob --------------------------->  Mobile object stored on heap 
+		Calculate(pMob)
+		 
+		delete pMob; 
+	}
+
+
+		in real apps 
+
+
+			 factory --> returned object
+
+
+
+		infinite references to the object 
+		 p1, p2, p3, p4 ........ p11 .. interfaces pointers exist to Mobile 
+
+
+	CMobile::addRef() {
+		_refCount++;
+	}
+
+	CMobile::Release() {
+		_refCount--;
+		if(0==_refCount)
+			delete this; // destuctor of your CMobile will be called.
+	}
+
+
+
+
+
+

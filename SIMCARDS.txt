@@ -1,0 +1,220 @@
+***jsim.cpp***
+#include "stdafx.h"
+#include "JSIM.h"
+
+
+JSIM::JSIM()
+{
+}
+
+void JSIM::greet()
+{
+	cout << "Welcome to JIO " << endl;
+}
+
+
+JSIM::~JSIM()
+{
+}
+
+
+jsim.h*********
+
+#pragma once
+#include <iostream>
+using namespace std;
+
+#include "GenSIM.h"
+
+#ifdef JIOSIM_EXPORTS
+#define JIOEXIM __declspec(dllexport)
+#else
+#define JIOEXIM __declspec(dllimport)
+#endif  
+
+class JIOEXIM JSIM : public GenSIM
+{
+public:
+	JSIM();
+	~JSIM();
+	virtual void greet();
+};
+
+
+
+
+
+***********asim.cpp****
+
+#include "stdafx.h"
+#include "ASIM.h"
+
+
+ASIM::ASIM()
+{
+}
+
+void ASIM::greet()
+{
+	cout << "Welcome to Airtel " << endl;
+}
+
+ASIM::~ASIM()
+{
+}
+
+
+
+*******asim.h*****
+#pragma once
+
+#include <iostream>
+using namespace std;
+
+#include "GenSIM.h"
+
+#ifdef AIRTELSIM_EXPORTS
+#define AEXIM __declspec(dllexport)
+#else
+#define AEXIM __declspec(dllimport)
+#endif 
+
+class AEXIM ASIM : public GenSIM
+{
+public:
+	ASIM();
+	~ASIM();
+	virtual void greet();
+};
+
+
+*******fsim.cpp*****
+
+#include "stdafx.h"
+#include<iostream>
+#include "FSIM.h"
+
+
+FSIM::FSIM()
+{
+}
+
+GenSIM* FSIM::getsim() 
+{
+	int choice;
+	cout << "press 1 for JIO\npress 2 for AIRTEL\n";
+	cin >> choice;
+
+	if (choice==1)
+	{
+
+		return new JSIM;
+
+	}
+	else if (choice == 1)
+	{
+		return new ASIM;
+	}
+		 
+	else
+	{
+		cout << "no valid input";
+		return  nullptr;
+	}
+
+	/*switch (choice)
+	{
+	case 1:
+		return new JSIM;
+		break;
+
+	case 2:
+		return new ASIM;
+		break;
+
+	default:
+	cout << "no valid input";
+
+	}*/
+}
+
+FSIM::~FSIM()
+{
+}
+
+
+
+
+***fsim.h***
+
+
+#pragma once
+
+#include "ASIM.h"
+#include "JSIM.h"
+//#include "GenSIM.h"
+#include<iostream>
+using namespace std;
+
+#ifdef FACTORYSIM_EXPORTS
+#define FACTEXIM __declspec(dllexport)
+#else
+#define FACTEXIM __declspec(dllimport)
+#endif 
+
+class FACTEXIM FSIM
+{
+private:
+	GenSIM* pSIM;
+
+public:
+	GenSIM* getsim();
+public:
+	FSIM();
+	~FSIM();
+};
+
+
+*******gensim.h********
+#pragma once
+#include <iostream>
+using namespace std;
+
+#ifdef GENERALSIM_EXPORTS
+#define SIM __declspec(dllexport)
+#else
+#define SIM __declspec(dllimport)
+#endif  
+
+class SIM GenSIM
+{
+public:
+	GenSIM();
+	~GenSIM();
+	virtual void greet() = 0;
+};
+
+
+
+
+*************simexe.cpp**********
+
+
+#include "pch.h"
+#include <iostream>
+#include <FSIM.h>
+//#include <GenSIM.h>
+using namespace std;
+
+int main()
+{
+	FSIM factorygeneralSIM;
+	GenSIM* generalSIM;
+	
+	generalSIM = factorygeneralSIM.getsim();
+
+	generalSIM->greet();
+}
+
+
+
